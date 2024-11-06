@@ -32,13 +32,14 @@ async def inserir_produto(inputDto: InserirProdutoDto) -> Produto:
     return novo_produto
 
 @router.post("/excluir_produto", status_code=204)
-async def excluir_produto(inputDto: IdProdutoDto):
-    if ProdutoRepo.excluir(inputDto.id_produto): return None
-    pd = ProblemDetailsDto("int", f"O produto com id <b>{inputDto.id_produto}</b> não foi encontrado.", "value_not_found", ["body", "id_produto"])
+async def excluir_produto(id_produto):
+    if ProdutoRepo.excluir(id_produto): return None
+    pd = ProblemDetailsDto("int", f"O produto com id <b>{id_produto}</b> não foi encontrado.", "value_not_found", ["body", "id_produto"])
     return JSONResponse(pd.to_dict(), status_code=404)
 
 @router.get("/obter_produto/{id_produto}")
 async def obter_produto(id_produto: int = Path(..., title="Id do Produto", ge=1)):
+    await asyncio.sleep(1)
     produto = ProdutoRepo.obter_um(id_produto)
     if produto: return produto
     pd = ProblemDetailsDto("int", f"O produto com id <b>{id_produto}</b> não foi encontrado.", "value_not_found", ["body", "id_produto"])
@@ -103,7 +104,8 @@ async def obter_pedidos_por_estado(estado: EstadoPedido = Path(..., title="Estad
     return pedidos
 
 @router.get("/obter_usuarios")
-async def obter_usuarios():
+async def obter_usuarios() -> List[Usuario]:
+    await asyncio.sleep(1)
     usuarios = UsuarioRepo.obter_todos()
     if not usuarios:
         pd = ProblemDetailsDto("int", f"Nenhum usuario foi encontrado", "value_not_found", ["body", "id_usuario"])
@@ -111,7 +113,7 @@ async def obter_usuarios():
     return usuarios
 
 @router.post("/excluir_usuario", status_code=204)
-async def excluir_usuario(inputDto: IdUsuarioDto):
-    if UsuarioRepo.excluir(inputDto.id_usuario): return None
-    pd = ProblemDetailsDto("int", f"O usuario com id <b>{inputDto.id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id_produto"])
+async def excluir_usuario(id_usuario):
+    if UsuarioRepo.excluir(id_usuario): return None
+    pd = ProblemDetailsDto("int", f"O usuario com id <b>{id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id_produto"])
     return JSONResponse(pd.to_dict(), status_code=404)
